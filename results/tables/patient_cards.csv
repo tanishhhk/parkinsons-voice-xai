@@ -1,0 +1,5 @@
+subject,y_true,y_prob,idx,pred,outcome,kind
+S01,1,0.8594516844850285,147,1,true positive,true positive
+S07,0,0.19005678608345697,98,0,true negative,true negative
+S13,0,0.5310052067381203,165,1,false positive,false positive
+S25,1,0.3149889672630486,177,0,false negative,false negative

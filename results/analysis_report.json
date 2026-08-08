@@ -1,0 +1,29 @@
+{
+  "roc_auc": {
+    "mean_optimism_excl_baseline": 0.1589525734362547,
+    "max_optimism": {
+      "model": "Gradient Boosting",
+      "value": 0.2673747279808561
+    }
+  },
+  "accuracy": {
+    "mean_optimism_excl_baseline": 0.10994519171304885,
+    "max_optimism": {
+      "model": "SVM (RBF)",
+      "value": 0.2064404761904762
+    }
+  },
+  "balanced_accuracy": {
+    "mean_optimism_excl_baseline": 0.1632890680174843,
+    "max_optimism": {
+      "model": "k-NN",
+      "value": 0.23613392841413017
+    }
+  },
+  "ranking": {
+    "best_under_leaky_protocol": "Extra Trees",
+    "best_under_honest_protocol": "Logistic Regression",
+    "spearman_rank_correlation_between_protocols": 0.1909,
+    "spearman_p": 0.5739
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "model": "Logistic Regression",
+  "top_biomarkers_univariate": [
+    {
+      "feature": "spread1",
+      "plain_name": "Pitch-variation measure 1",
+      "direction": "higher in PD",
+      "cohens_d": 2.033,
+      "auc_single_feature": 0.927
+    },
+    {
+      "feature": "PPE",
+      "plain_name": "Pitch-period entropy",
+      "direction": "higher in PD",
+      "cohens_d": 1.91,
+      "auc_single_feature": 0.922
+    },
+    {
+      "feature": "MDVP:APQ",
+      "plain_name": "Amplitude perturbation",
+      "direction": "higher in PD",
+      "cohens_d": 1.22,
+      "auc_single_feature": 0.875
+    },
+    {
+      "feature": "spread2",
+      "plain_name": "Pitch-variation measure 2",
+      "direction": "higher in PD",
+      "cohens_d": 1.459,
+      "auc_single_feature": 0.859
+    },
+    {
+      "feature": "MDVP:Shimmer",
+      "plain_name": "Loudness instability",
+      "direction": "higher in PD",
+      "cohens_d": 1.235,
+      "auc_single_feature": 0.828
+    }
+  ],
+  "top_biomarkers_model": [
+    {
+      "feature": "spread1",
+      "plain_name": "Pitch-variation measure 1",
+      "mean_abs_shap": 0.1546,
+      "effect_direction": "raises PD risk when high"
+    },
+    {
+      "feature": "PPE",
+      "plain_name": "Pitch-period entropy",
+      "mean_abs_shap": 0.1412,
+      "effect_direction": "raises PD risk when high"
+    },
+    {
+      "feature": "spread2",
+      "plain_name": "Pitch-variation measure 2",
+      "mean_abs_shap": 0.1219,
+      "effect_direction": "raises PD risk when high"
+    },
+    {
+      "feature": "D2",
+      "plain_name": "Signal complexity",
+      "mean_abs_shap": 0.0984,
+      "effect_direction": "raises PD risk when high"
+    },
+    {
+      "feature": "MDVP:Fo(Hz)",
+      "plain_name": "Average pitch",
+      "mean_abs_shap": 0.0966,
+      "effect_direction": "lowers PD risk when high"
+    }
+  ],
+  "spearman_univariate_vs_model": 0.483
+}

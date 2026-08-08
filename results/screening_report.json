@@ -1,0 +1,44 @@
+{
+  "model": "Logistic Regression",
+  "target_sensitivity": 0.9,
+  "threshold_mean": 0.3940045144456346,
+  "threshold_sd": 0.04578274239252987,
+  "n_outer_folds": 40,
+  "recording_level": {
+    "sensitivity": 0.8973,
+    "specificity": 0.4833,
+    "ppv": 0.8421,
+    "npv": 0.6077,
+    "roc_auc": 0.8342,
+    "sensitivity_sd": 0.0232,
+    "specificity_sd": 0.0679,
+    "roc_auc_sd": 0.0208,
+    "mean_confusion": {
+      "tn": 23.2,
+      "fp": 24.8,
+      "fn": 15.1,
+      "tp": 131.9
+    }
+  },
+  "speaker_level": {
+    "sensitivity": 0.9208,
+    "specificity": 0.4875,
+    "ppv": 0.8435,
+    "npv": 0.6771,
+    "roc_auc": 0.8516,
+    "sensitivity_sd": 0.0237,
+    "specificity_sd": 0.0395,
+    "roc_auc_sd": 0.0355,
+    "mean_confusion": {
+      "tn": 3.9,
+      "fp": 4.1,
+      "fn": 1.9,
+      "tp": 22.1
+    }
+  },
+  "calibration": {
+    "brier_score": 0.1652,
+    "mean_predicted": 0.5783,
+    "observed_prevalence": 0.7538
+  }
+}

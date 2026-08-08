@@ -1,0 +1,36 @@
+{
+  "model": "Random Forest",
+  "best_params": {
+    "clf__max_depth": "None",
+    "clf__min_samples_leaf": "3"
+  },
+  "n_train_subjects": 24,
+  "n_test_subjects": 8,
+  "shap_raw_shape": [
+    49,
+    16,
+    2
+  ],
+  "mean_abs_shap_classmean": 1.3470259081066732e-17,
+  "mean_abs_shap_positive_class": 0.03160619841245198,
+  "spearman_shap_vs_permutation": -0.1647058823529412,
+  "top5_shap": {
+    "spread1": 0.0723,
+    "PPE": 0.0676,
+    "MDVP:Fhi(Hz)": 0.0543,
+    "DFA": 0.0383,
+    "D2": 0.0367
+  },
+  "top5_permutation": {
+    "spread2": 0.0279,
+    "MDVP:APQ": 0.0188,
+    "MDVP:Fhi(Hz)": 0.0133,
+    "MDVP:Shimmer": 0.0084,
+    "MDVP:Fo(Hz)": 0.0067
+  },
+  "lime_cases": {
+    "most_confident_PD": 7,
+    "most_confident_healthy": 44,
+    "most_uncertain": 3
+  }
+}

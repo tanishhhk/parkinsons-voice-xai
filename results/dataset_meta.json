@@ -1,0 +1,49 @@
+{
+  "n_records": 195,
+  "n_subjects": 32,
+  "n_features": 16,
+  "records_per_subject": {
+    "count": 32.0,
+    "mean": 6.09375,
+    "std": 0.29614458108029906,
+    "min": 6.0,
+    "25%": 6.0,
+    "50%": 6.0,
+    "75%": 6.0,
+    "max": 7.0
+  },
+  "record_class_balance": {
+    "1": 147,
+    "0": 48
+  },
+  "subject_class_balance": {
+    "1": 24,
+    "0": 8
+  },
+  "dropped_features": {
+    "MDVP:RAP": {
+      "correlated_with": "MDVP:Jitter(%)",
+      "r": 0.990276
+    },
+    "Jitter:DDP": {
+      "correlated_with": "MDVP:Jitter(%)",
+      "r": 0.990276
+    },
+    "MDVP:Shimmer(dB)": {
+      "correlated_with": "MDVP:Shimmer",
+      "r": 0.987258
+    },
+    "Shimmer:APQ3": {
+      "correlated_with": "MDVP:Shimmer",
+      "r": 0.987625
+    },
+    "Shimmer:APQ5": {
+      "correlated_with": "MDVP:Shimmer",
+      "r": 0.982835
+    },
+    "Shimmer:DDA": {
+      "correlated_with": "MDVP:Shimmer",
+      "r": 0.987626
+    }
+  }
+}

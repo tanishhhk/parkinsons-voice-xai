@@ -1,0 +1,17 @@
+feature,mean_abs_shap,effect_direction,value_shap_corr,plain_name
+spread1,0.15455523286669123,raises PD risk when high,0.9926377973724873,Pitch-variation measure 1
+PPE,0.14123335446616261,raises PD risk when high,0.9904113004449762,Pitch-period entropy
+spread2,0.12185181556558251,raises PD risk when high,0.9733006704041403,Pitch-variation measure 2
+D2,0.09835567255117074,raises PD risk when high,0.9660657945699185,Signal complexity
+MDVP:Fo(Hz),0.09660086285070399,lowers PD risk when high,-0.9764999320350617,Average pitch
+MDVP:APQ,0.08637506083530336,raises PD risk when high,0.9784314824053032,Amplitude perturbation
+MDVP:Shimmer,0.08506222438265156,raises PD risk when high,0.9918329670052951,Loudness instability
+DFA,0.08332129618316442,raises PD risk when high,0.9429676568731078,Breath-noise scaling
+MDVP:Flo(Hz),0.07693241283790281,lowers PD risk when high,-0.9828785944625336,Lowest pitch
+RPDE,0.06767783871388247,raises PD risk when high,0.8383737882923838,Signal unpredictability
+HNR,0.06693928760338863,lowers PD risk when high,-0.9573043092112254,Harmonics-to-noise
+NHR,0.06352312213753138,raises PD risk when high,0.9429382733102079,Noise-to-harmonics
+MDVP:PPQ,0.05674943099116888,raises PD risk when high,0.9601173412138754,Pitch perturbation
+MDVP:Jitter(Abs),0.05565659969154279,raises PD risk when high,0.9875812528794217,Pitch instability (abs)
+MDVP:Fhi(Hz),0.047003638359089085,lowers PD risk when high,-0.8484680517258057,Highest pitch
+MDVP:Jitter(%),0.04492589992886369,raises PD risk when high,0.9687913016379227,Pitch instability

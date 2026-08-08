@@ -1,0 +1,17 @@
+feature,plain_name,meaning,healthy_mean,parkinsons_mean,direction,cohens_d,auc_single_feature
+spread1,Pitch-variation measure 1,Nonlinear measure of fundamental-frequency variation,-6.759263875,-5.345571916666667,higher in PD,2.0330034789782268,0.9270833333333334
+PPE,Pitch-period entropy,Impaired control of pitch on a logarithmic scale,0.12301710416666667,0.23275779563492063,higher in PD,1.9099786110451025,0.921875
+MDVP:APQ,Amplitude perturbation,Eleven-point amplitude perturbation quotient,0.013304791666666666,0.027249523809523807,higher in PD,1.2198966319236824,0.875
+spread2,Pitch-variation measure 2,Nonlinear measure of fundamental-frequency variation,0.160292,0.24623385912698414,higher in PD,1.459023224624869,0.859375
+MDVP:Shimmer,Loudness instability,Cycle-to-cycle variation in amplitude,0.017615208333333333,0.03334468253968254,higher in PD,1.2349643051737862,0.828125
+MDVP:PPQ,Pitch perturbation,Five-point period perturbation quotient,0.002056041666666667,0.0038568750000000005,higher in PD,0.9215381663441617,0.8072916666666667
+MDVP:Jitter(Abs),Pitch instability (abs),Absolute cycle-to-cycle pitch variation,2.3375000000000002e-05,5.05357142857143e-05,higher in PD,1.0920765874772325,0.8072916666666666
+D2,Signal complexity,Correlation dimension of the reconstructed attractor,2.1544907291666666,2.4443776646825395,higher in PD,1.066574594714008,0.7864583333333334
+NHR,Noise-to-harmonics,Ratio of noise to tonal components,0.011482708333333334,0.0285365873015873,higher in PD,0.5747434251773526,0.7864583333333333
+MDVP:Jitter(%),Pitch instability,Cycle-to-cycle variation in pitch period,0.0038660416666666665,0.0069189880952380935,higher in PD,0.880726821736932,0.7760416666666666
+HNR,Harmonics-to-noise,"Tonal clarity; low values mean a breathy, hoarse voice",24.67875,21.05391865079365,lower in PD,-0.9666706274729538,0.7447916666666666
+RPDE,Signal unpredictability,Recurrence period density entropy of the waveform,0.44255187500000004,0.5165815337301587,higher in PD,0.848900677773184,0.7395833333333334
+MDVP:Fo(Hz),Average pitch,Mean fundamental frequency of the sustained vowel,181.93777083333333,144.49827777777776,lower in PD,-0.8382412716787105,0.7083333333333333
+MDVP:Fhi(Hz),Highest pitch,Maximum fundamental frequency reached,223.63675,186.31980753968253,lower in PD,-0.6003938321974317,0.7083333333333333
+MDVP:Flo(Hz),Lowest pitch,Minimum fundamental frequency reached,145.20729166666666,106.62829960317463,lower in PD,-0.9287269404761099,0.703125
+DFA,Breath-noise scaling,Detrended fluctuation analysis; turbulent-noise self-similarity,0.6957155625,0.7255488839285714,higher in PD,0.5678542021484619,0.65625

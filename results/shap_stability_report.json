@@ -1,0 +1,37 @@
+{
+  "n_folds": 12,
+  "mean_pairwise_spearman": 0.5418894830659535,
+  "min_pairwise_spearman": -0.21470588235294116,
+  "top5_stable": {
+    "spread1": {
+      "mean_abs_shap": 0.0847,
+      "sd_across_folds": 0.0276,
+      "mean_rank": 1.9167,
+      "rank_sd": 1.379
+    },
+    "PPE": {
+      "mean_abs_shap": 0.0701,
+      "sd_across_folds": 0.0244,
+      "mean_rank": 3.3333,
+      "rank_sd": 2.0597
+    },
+    "spread2": {
+      "mean_abs_shap": 0.0535,
+      "sd_across_folds": 0.0369,
+      "mean_rank": 5.0833,
+      "rank_sd": 3.6546
+    },
+    "MDVP:APQ": {
+      "mean_abs_shap": 0.0385,
+      "sd_across_folds": 0.0158,
+      "mean_rank": 5.3333,
+      "rank_sd": 2.3094
+    },
+    "MDVP:Fhi(Hz)": {
+      "mean_abs_shap": 0.0357,
+      "sd_across_folds": 0.0183,
+      "mean_rank": 6.5,
+      "rank_sd": 4.101
+    }
+  }
+}
