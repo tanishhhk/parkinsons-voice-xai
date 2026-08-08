@@ -222,14 +222,35 @@ a top-ten list of biomarkers.
 
 ## Data
 
-Little, M., McSharry, P., Roberts, S., Costello, D., & Moroz, I. (2007).
-*Exploiting nonlinear recurrence and fractal scaling properties for voice disorder
-detection.* BioMedical Engineering OnLine, 6:23.
-[doi:10.1186/1475-925X-6-23](https://doi.org/10.1186/1475-925X-6-23)
+The dataset is the Oxford Parkinson's Disease Detection Dataset. It is widely mirrored
+on Kaggle, but the source of record is the UCI Machine Learning Repository, so that is
+what is cited here.
 
-Dataset: UCI Machine Learning Repository, "Parkinsons" (ID 174), CC BY 4.0. Created by
-Max Little of the University of Oxford with the National Centre for Voice and Speech,
-Denver, Colorado.
+**Source:** [UCI Machine Learning Repository, "Parkinsons" (ID 174)](https://archive.ics.uci.edu/dataset/174/parkinsons)
+**Creator:** Max Little, University of Oxford, with the National Centre for Voice and
+Speech, Denver, Colorado
+**Licence:** Creative Commons Attribution 4.0 International (CC BY 4.0), verified
+against the UCI dataset page
+
+```
+Little, M. (2007). Parkinsons [Dataset]. UCI Machine Learning Repository.
+https://doi.org/10.24432/C59C74
+
+Little, M., McSharry, P., Roberts, S., Costello, D., & Moroz, I. (2007). Exploiting
+nonlinear recurrence and fractal scaling properties for voice disorder detection.
+BioMedical Engineering OnLine, 6:23. https://doi.org/10.1186/1475-925X-6-23
+```
+
+### A note on the number of people
+
+UCI documents this dataset as 195 recordings from **31 people**, 23 of them with
+Parkinson's. The `name` column actually contains **32 distinct subject IDs**, splitting
+24 to 8. I group by subject ID, because that is the only grouping the file supports.
+
+If two of those IDs really are the same person, then that person could appear on both
+sides of a split, and the reported scores would be very slightly optimistic. The effect
+is small, and it runs in the safe direction for the main argument of this project:
+grouping by ID is strictly more conservative than not grouping at all.
 
 ## Author
 
@@ -238,5 +259,12 @@ Denver, Colorado.
 
 ## License
 
-Code released under the MIT License. The dataset is redistributed under CC BY 4.0 with
-the attribution above.
+Two licences apply.
+
+The **code** in `src/`, `notebooks/` and the generated `results/` is released under the
+MIT License.
+
+The **dataset** in `data/parkinsons.data` is not mine to license. It is redistributed
+under CC BY 4.0 with the attribution given above. CC BY 4.0 allows redistribution and
+adaptation, including commercially, as long as credit is given. See `LICENSE` for the
+full text of both.

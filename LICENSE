@@ -1,4 +1,11 @@
-MIT License
+This project has two licences.
+
+  * The CODE (src/, notebooks/, and the generated results/) is MIT, below.
+  * The DATA in data/parkinsons.data is NOT mine to license. It is
+    redistributed under CC BY 4.0, see the notice at the end of this file.
+
+-------------------------------------------------------------------------------
+MIT License (applies to the code only)
 
 Copyright (c) 2026 Tanishk Jain
 
@@ -20,9 +27,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
+-------------------------------------------------------------------------------
+DATA NOTICE (applies to data/parkinsons.data)
 
-The dataset in data/parkinsons.data is redistributed from the UCI Machine
-Learning Repository ("Parkinsons", ID 174) under CC BY 4.0. Original creators:
-Max Little (University of Oxford) in collaboration with the National Centre for
-Voice and Speech, Denver, Colorado. See README.md for the full citation.
+The MIT licence above does NOT cover the dataset. I am not the owner of this
+data and cannot relicense it.
+
+Source of record : UCI Machine Learning Repository, "Parkinsons", ID 174
+                   https://archive.ics.uci.edu/dataset/174/parkinsons
+Creator          : Max Little, University of Oxford, with the National Centre
+                   for Voice and Speech, Denver, Colorado
+DOI              : 10.24432/C59C74
+Licence          : Creative Commons Attribution 4.0 International (CC BY 4.0)
+                   https://creativecommons.org/licenses/by/4.0/legalcode
+                   Verified against the UCI dataset page.
+
+Required citation:
+
+  Little, M. (2007). Parkinsons [Dataset]. UCI Machine Learning Repository.
+  https://doi.org/10.24432/C59C74
+
+  Little, M., McSharry, P., Roberts, S., Costello, D., & Moroz, I. (2007).
+  Exploiting nonlinear recurrence and fractal scaling properties for voice
+  disorder detection. BioMedical Engineering OnLine, 6:23.
+
+CC BY 4.0 permits redistribution and adaptation for any purpose, including
+commercial use, provided attribution is given. That attribution is given above.
+
+This dataset is also mirrored on Kaggle by third-party uploaders. Those mirrors
+are copies of the UCI release and do not change its licence or its ownership,
+so UCI is cited as the source of record here.
