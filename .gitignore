@@ -19,3 +19,5 @@ Thumbs.db
 
 # Generated logs
 results/run.log
+# local working notes, not part of the published project
+NEXT_STEPS.md
