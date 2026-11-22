@@ -63,14 +63,14 @@
             <dt>{{screening.report.roc_auc|dp3}}</dt>
             <dd>
               ROC-AUC per person, on people the model never heard, catching {{screening.report.sensitivity|pct1}} of
-              Parkinson's cases
+              Parkinson's cases and clearing {{screening.report.specificity|pct1}} of healthy people
             </dd>
           </div>
           <div class="fact">
             <dt>{{singleFeature[model=spread1].personAuc|dp3}}</dt>
             <dd>
               ROC-AUC per person from one pitch measure, <code>spread1</code>, against
-              {{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}} with all 16 in the same experiment
+              {{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}} with all {{dataset.featuresAfter|int}} in the same experiment
             </dd>
           </div>
         </dl>
@@ -174,7 +174,7 @@
           <p class="pull">
             The two methods don't even agree on the winner. Random split: {{split.bestLeaky.model|text}} at
             {{split.bestLeaky.recording|dp3}}. Split by person: {{split.bestHonest.model|text}} at
-            {{split.bestHonest.person|dp3}}. Rank correlation between the two orderings: {{split.rankCorr|dp2}}, so
+            {{split.bestHonest.person|dp3}}, both per recording. Rank correlation between the two orderings: {{split.rankCorr|dp2}}, so
             choosing a model with the flawed split is close to choosing at random.
           </p>
         </header>
@@ -229,19 +229,20 @@
             test data.
           </p>
           <p class="stat">
-            <span class="stat-n">{{benchmark[model=Logistic Regression].mean|dp3}}</span>
+            <span class="stat-n">{{benchmark.0.mean|dp3}}</span>
             <span class="stat-t">
               ROC-AUC per recording for {{benchmark.0.model|text}}, the best model. It averages
-              {{benchmark[model=Logistic Regression].runs|len}} of {{benchmark[model=Logistic Regression].totalRuns|int}}
-              runs: in {{benchmark[model=Logistic Regression].undefinedRuns|int}} runs the test group held no healthy
+              {{benchmark.0.runs|len}} of {{benchmark.0.totalRuns|int}}
+              runs: in {{benchmark.0.undefinedRuns|int}} runs the test group held no healthy
               speakers, so ROC-AUC is undefined.
             </span>
           </p>
           <p>
-            The simplest model won, narrowly: {{benchmark.1.model|text}} reached {{benchmark.1.mean|dp3}} and
+            The simplest real model won, narrowly: {{benchmark.1.model|text}} reached {{benchmark.1.mean|dp3}} and
             {{benchmark.2.model|text}} {{benchmark.2.mean|dp3}}. With {{dataset.people|int}} people there is not enough
-            data for complex models to find anything a straight line misses, and their scores swing more from run to
-            run.
+            data for complex models to find anything a straight line misses, and the boosted models
+            ({{benchmark[model=XGBoost].model|text}} and {{benchmark[model=Gradient Boosting].model|text}}) swing far
+            more from run to run.
           </p>
         </header>
 
@@ -255,8 +256,9 @@
           <h2 id="explain-title"><span class="n" aria-hidden="true">4</span>What explainability changed</h2>
           <p>
             SHAP splits each prediction into the share each measurement contributed. I expected a tidy chart. Instead
-            it showed that <code>spread1</code> and <code>PPE</code>, two measures of pitch instability, carry most of
-            the signal. Recomputed across {{explain.stabilitySplits|int}} different splits, only those two keep their
+            it showed that <code>spread1</code> and <code>PPE</code>, two measures of pitch instability, rank first and
+            second, with the largest shares of the signal. The SHAP values come from a Random Forest, not the benchmark
+            winner. Recomputed across {{explain.stabilitySplits|int}} different splits, only those two keep their
             place: average rank {{shap[feature=spread1].rankMean|dp1}} and {{shap[feature=PPE].rankMean|dp1}}.
             Everything below them shuffles.
           </p>
@@ -268,7 +270,7 @@
           </p>
           <p>
             One measurement beats all {{dataset.featuresAfter|int}} and varies far less between runs. With so few
-            people, the extra features fit noise. The right product here is a two-measurement test, not a large ensemble.
+            people, the extra features fit noise. It points towards a small test built on one or two pitch measurements, which this study did not build or test.
           </p>
         </header>
 
@@ -282,7 +284,7 @@
         <header class="sec-head">
           <h2 id="voice-title"><span class="n" aria-hidden="true">5</span>What the voice reveals</h2>
           <p>
-            The strongest measurements are all about pitch that won't hold still. <code>spread1</code> tracks how
+            The two strongest measurements are about pitch that won't hold still. <code>spread1</code> tracks how
             erratically pitch moves; <code>PPE</code> measures irregular pitch control. Both run higher in
             Parkinson's, with effect sizes of {{biomarkers[feature=spread1].d|dp2}} and
             {{biomarkers[feature=PPE].d|dp2}}. An effect size (Cohen's d) above 0.8 already counts as large.
@@ -325,21 +327,22 @@
 
         <div class="sec-body">
           <div class="chart chart-people" data-chart="people" aria-label="Four held-out people on the risk scale"></div>
-          <figure class="plate" id="patient-cards">
+        </div>
+      <figure class="plate" id="patient-cards">
+            <a class="plate-open" href="/figures/patient_cards.png">Open full size</a>
             <div class="plate-scroll" tabindex="0" role="region" aria-label="Patient cards figure, scrolls sideways on narrow screens">
             <img
               src="/figures/patient_cards.png"
-              alt="Four bar charts, one per held-out person (S01, S07, S13, S25). Each lists the measurements that pushed that person's score towards or away from Parkinson's. S01 is pushed up mainly by DFA, spread1 and PPE; S07 and S25 are pushed down by spread1, PPE and spread2; S13 has mixed pushes, with MDVP:Fo(Hz) and spread2 raising the score."
+              alt="Four bar charts, one per held-out person (S01, S07, S13, S25). Each lists the measurements that pushed that person's score towards or away from Parkinson's. S01 is pushed up mainly by DFA, spread1 and PPE; S07 is pushed down by spread1, PPE and MDVP:Flo(Hz), and S25 by spread2, RPDE and spread1; S13 has mixed pushes, with MDVP:Fo(Hz) and spread2 raising the score."
               loading="lazy"
               decoding="async"
             />
             </div>
             <figcaption>
-              The per-measurement reasons from the original analysis, one card per person: red bars push the score towards
+              The per-measurement reasons from the original analysis, one card per person. The bars come from one of each person's recordings, while the score is the person's average across recordings: red bars push the score towards
               Parkinson's, blue bars away from it. Same four people as the scale above.
             </figcaption>
-          </figure>
-        </div>
+      </figure>
       </section>
 
       <section id="alarm" class="sec" aria-labelledby="alarm-title">
@@ -551,7 +554,7 @@ jupyter nbconvert --to notebook --execute --inplace parkinsons_xai.ipynb</code><
     </main>
 
     <footer class="foot">
-      <p><strong>Not a medical device.</strong> This page collects no data.</p>
+      <p><strong>Not a medical device.</strong> This page collects no data. Fonts load from Google Fonts.</p>
       <p>
         Tanishk Jain. Code MIT, data CC BY 4.0 from the
         <a href="https://archive.ics.uci.edu/dataset/174/parkinsons">UCI Machine Learning Repository</a>.

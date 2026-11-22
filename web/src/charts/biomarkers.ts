@@ -86,7 +86,7 @@ export function renderBiomarkers(el: HTMLElement, data: BiomarkerRow[]): void {
     const note = document.createElement("p");
     note.className = "chart-note";
     note.textContent =
-      '"alone" is the ROC-AUC per person when that single measurement is used as the score, with no model. Rows are sorted by effect size.';
+      '"alone" is the ROC-AUC per person when that single measurement is used as the score, with no model, scored in whichever direction separates better. Rows are sorted by effect size.';
     el.appendChild(note);
   };
 

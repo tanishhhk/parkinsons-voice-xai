@@ -1155,6 +1155,17 @@ tbody th {
 /* Patient cards figure */
 .plate {
   margin: var(--gap) 0 0;
+  min-width: 0;
+}
+.plate-open {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font: 600 var(--t-small) / 1.4 var(--sans);
+}
+@media (min-width: 1100px) {
+  .plate {
+    grid-column: 1 / -1;
+  }
 }
 .plate-scroll {
   overflow-x: auto;

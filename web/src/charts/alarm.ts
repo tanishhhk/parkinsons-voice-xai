@@ -159,7 +159,7 @@ export function renderAlarm(el: HTMLElement, screening: ScreeningData, cohort: C
   plot.className = "plot";
   const auc = document.createElement("p");
   auc.className = "chart-note alarm-auc";
-  auc.textContent = `ROC-AUC per person (mean of 10 rounds): ${aucText}`;
+  auc.textContent = `ROC-AUC per person (mean of ${int(rocCurves.length)} rounds): ${aucText}`;
   rocBox.append(keys, plot, auc);
   layout.appendChild(rocBox);
 
