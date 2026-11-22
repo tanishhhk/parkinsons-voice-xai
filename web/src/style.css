@@ -973,8 +973,7 @@ tbody th {
 .split-svg .val {
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  opacity: 0.55;
-  transition: opacity 0.3s;
+  font-weight: 450;
 }
 .split-svg .val-recording {
   fill: var(--tulip);
@@ -993,8 +992,7 @@ tbody th {
 }
 .split-svg[data-mode="recording"] .val-recording,
 .split-svg[data-mode="person"] .val-person {
-  opacity: 1;
-  font-weight: 650;
+  font-weight: 700;
 }
 .split-svg .row.best .name {
   font-weight: 700;
@@ -1004,8 +1002,7 @@ tbody th {
   font-size: 0.9375rem;
 }
 .split-svg.no-anim .row,
-.split-svg.no-anim .dot,
-.split-svg.no-anim .val {
+.split-svg.no-anim .dot {
   transition: none;
 }
 
@@ -1040,7 +1037,6 @@ tbody th {
 @media (prefers-reduced-motion: reduce) {
   .split-svg .row,
   .split-svg .dot,
-  .split-svg .val,
   .toggle-btn {
     transition: none;
   }
