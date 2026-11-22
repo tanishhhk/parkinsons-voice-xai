@@ -354,10 +354,11 @@
             </tbody>
           </table>
           <p>
-            A typical test round holds {{dataset.healthy|int}} healthy people and {{dataset.pd|int}} with Parkinson's.
-            On average the model clears {{screening.report.mean_confusion.tn|dp1}} healthy people and falsely alarms on
-            {{screening.report.mean_confusion.fp|dp1}}; it catches {{screening.report.mean_confusion.tp|dp1}} cases and
-            misses {{screening.report.mean_confusion.fn|dp1}}. Useful as an early warning before a doctor's
+            In one full round, each of the {{dataset.people|int}} people is tested once by a model that never saw
+            them. On average the model clears {{screening.report.mean_confusion.tn|dp1}} of the
+            {{dataset.healthy|int}} healthy people and raises a false alarm on
+            {{screening.report.mean_confusion.fp|dp1}}; it catches {{screening.report.mean_confusion.tp|dp1}} of the
+            {{dataset.pd|int}} with Parkinson's and misses {{screening.report.mean_confusion.fn|dp1}}. Useful as an early warning before a doctor's
             assessment, not as a diagnosis. Move the threshold to see the trade.
           </p>
         </header>
