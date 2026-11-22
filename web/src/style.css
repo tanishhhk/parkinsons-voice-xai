@@ -453,10 +453,10 @@ tbody th {
   color: var(--muted);
 }
 .chart-split {
-  --chart-h: 460px;
+  --chart-h: 720px;
 }
 .chart-benchmark {
-  --chart-h: 600px;
+  --chart-h: 760px;
 }
 .chart-shap {
   --chart-h: 520px;
@@ -838,5 +838,210 @@ tbody th {
   .trace .wave {
     animation: none;
     stroke-dashoffset: 0;
+  }
+}
+
+/* Shared chart furniture */
+.chart svg {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+}
+.chart svg text {
+  font: 500 0.8125rem var(--sans);
+  fill: var(--ink);
+}
+.chart .grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.chart .tick,
+.chart .axis-title {
+  fill: var(--muted);
+  font-size: 0.75rem;
+}
+.chart .axis-title {
+  font-weight: 450;
+}
+.chart-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin: 0 0 0.75rem;
+  font: 500 var(--t-small) var(--sans);
+  color: var(--ink-2);
+}
+.ck {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ck i {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+}
+.ck-recording i {
+  background: var(--tulip);
+}
+.ck-person i {
+  background: var(--calm);
+}
+.ck-run i {
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--calm);
+  opacity: 0.55;
+}
+.ck-mean i {
+  width: 0.2rem;
+  height: 1rem;
+  border-radius: 1px;
+  background: var(--ink);
+}
+.ck-chance i {
+  width: 0;
+  height: 1rem;
+  border-radius: 0;
+  border-left: 2px dashed var(--muted);
+}
+.chart-note {
+  margin: 0.75rem 0 0;
+  font: 450 var(--t-small) / 1.5 var(--sans);
+  color: var(--muted);
+}
+.chart-summary {
+  margin: 0.75rem 0 0.5rem;
+  font: 500 var(--t-small) var(--sans);
+  color: var(--ink-2);
+}
+
+/* Split toggle */
+.toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--paper-2);
+  border-radius: 999px;
+}
+.toggle-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: 550 var(--t-small) var(--sans);
+  padding: 0.55rem 1rem;
+  min-height: 2.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.toggle-btn[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.toggle-btn:focus-visible {
+  outline: 2px solid var(--tulip);
+  outline-offset: 2px;
+}
+
+/* Split dumbbells */
+.split-svg .row {
+  transition: transform 0.4s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.split-svg .conn {
+  stroke: #cdbfc6;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.split-svg .dot {
+  transition: r 0.3s, opacity 0.3s;
+}
+.split-svg .dot-recording {
+  fill: var(--tulip);
+}
+.split-svg .dot-person {
+  fill: var(--calm);
+}
+.split-svg .gap {
+  fill: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.split-svg .val {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+  transition: opacity 0.3s;
+}
+.split-svg .val-recording {
+  fill: var(--tulip);
+}
+.split-svg .val-person {
+  fill: var(--calm);
+}
+.split-svg[data-mode="recording"] .dot-recording,
+.split-svg[data-mode="person"] .dot-person {
+  r: 7.5px;
+}
+.split-svg[data-mode="recording"] .dot-person,
+.split-svg[data-mode="person"] .dot-recording {
+  opacity: 0.55;
+  r: 5px;
+}
+.split-svg[data-mode="recording"] .val-recording,
+.split-svg[data-mode="person"] .val-person {
+  opacity: 1;
+  font-weight: 650;
+}
+.split-svg .row.best .name {
+  font-weight: 700;
+}
+.split-svg[data-mode="recording"] .row.best .val-recording,
+.split-svg[data-mode="person"] .row.best .val-person {
+  font-size: 0.9375rem;
+}
+.split-svg.no-anim .row,
+.split-svg.no-anim .dot,
+.split-svg.no-anim .val {
+  transition: none;
+}
+
+/* Benchmark strips */
+.bench-svg .name {
+  font-weight: 600;
+}
+.bench-svg .mean-val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+.bench-svg .run {
+  fill: var(--calm);
+  opacity: 0.5;
+}
+.bench-svg .mean {
+  fill: var(--ink);
+}
+.bench-svg .chance {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.bench-svg .chance-label {
+  fill: var(--muted);
+  font-size: 0.75rem;
+}
+.bench-svg .bench-row:hover .run {
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .split-svg .row,
+  .split-svg .dot,
+  .split-svg .val,
+  .toggle-btn {
+    transition: none;
   }
 }
