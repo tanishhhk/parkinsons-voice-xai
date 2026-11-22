@@ -58,7 +58,7 @@ the flawed method is close to picking at random.
 **2. Explainability changed the model, instead of just describing it.**
 
 I expected SHAP to produce a nice chart. Instead it showed that one measurement,
-`spread1`, carries nearly all the signal. So I tested it directly.
+`spread1`, ranks first, with `PPE` close behind. So I tested it directly.
 
 | Model | Features used | Score |
 |---|---|---|
@@ -67,8 +67,9 @@ I expected SHAP to produce a nice chart. Instead it showed that one measurement,
 | All features | 16 | 0.847 |
 
 The one-feature model is more accurate and eight times more consistent between runs.
-With only 32 people in the dataset, the extra fifteen features are fitting noise. The
-right product here is a two-measurement test, not a large ensemble.
+With only 32 people in the dataset, the extra fifteen features are fitting noise. That
+points towards a small test built on one or two pitch measurements, which this project
+did not build or test, rather than a large ensemble.
 
 **3. Simpler models won.**
 
@@ -120,9 +121,9 @@ tuned it to catch 90% of cases and then measured what that costs.
 | Sensitivity | 89.7% | **92.1%** |
 | Specificity | 48.3% | **48.8%** |
 
-A typical test round has 8 healthy people and 24 with Parkinson's. The model clears
-about 4 healthy people and falsely alarms on about 4. It catches about 22 cases and
-misses about 2.
+In one full round, each of the 32 people (8 healthy, 24 with Parkinson's) is tested
+once by a model that never saw them. On average the model clears about 4 healthy people
+and falsely alarms on about 4. It catches about 22 cases and misses about 2.
 
 ![screening curves](results/figures/screening_curves.png)
 
@@ -180,8 +181,8 @@ error in notebooks on this dataset, so it is documented in the code.
 
 I also checked whether the explanations themselves are trustworthy by recomputing them
 across 12 different splits. Only `spread1` and `PPE` rank consistently. Everything
-below them shuffles around. That is why the conclusion is a two-feature model and not
-a top-ten list of biomarkers.
+below them shuffles around. That is why the conclusion points to one or two measurements,
+not a top-ten list of biomarkers.
 
 ## What this cannot do
 

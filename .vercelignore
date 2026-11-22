@@ -1,0 +1,8 @@
+/src/
+/notebooks/
+/data/
+/docs/
+/NEXT_STEPS.md
+**/__pycache__/
+/web/node_modules/
+/web/dist/
