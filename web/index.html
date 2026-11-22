@@ -22,27 +22,21 @@
 
     <main>
       <section id="hero" class="hero" aria-labelledby="hero-title">
-        <div class="hero-bar">
-          <p>A machine learning study by <a href="https://tanishkjain.vercel.app/">Tanishk Jain</a></p>
-          <p class="hero-links">
-            <a href="https://github.com/tanishhhk/parkinsons-voice-xai">Code on GitHub</a>
-            <a href="https://github.com/tanishhhk/parkinsons-voice-xai/blob/main/notebooks/parkinsons_xai.ipynb">Read the notebook</a>
-          </p>
-        </div>
-
         <div class="hero-main">
           <h1 id="hero-title">Detecting Parkinson's from the voice</h1>
+          <div class="hero-bar">
+            <p>A machine learning study by <a href="https://tanishkjain.vercel.app/">Tanishk Jain</a></p>
+            <p class="hero-links">
+              <a href="https://github.com/tanishhhk/parkinsons-voice-xai">Code on GitHub</a>
+              <a href="https://github.com/tanishhhk/parkinsons-voice-xai/blob/main/notebooks/parkinsons_xai.ipynb">Read the notebook</a>
+            </p>
+          </div>
           <p class="hero-lede">
             Parkinson's disease disrupts the fine muscle control that holds a steady pitch. This study predicts it from
             voice recordings, tests every model on people it has never heard, and shows which parts of the voice drove
             each prediction.
           </p>
         </div>
-
-        <figure class="trace">
-          <svg id="trace" viewBox="0 0 1600 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>
-          <figcaption>Illustration, not data: a held "aah" whose pitch starts steady and then wavers.</figcaption>
-        </figure>
 
         <dl class="facts">
           <div class="fact">
@@ -304,7 +298,8 @@
         </div>
       </section>
 
-      <section id="people" class="sec" aria-labelledby="people-title">
+      <section id="people" class="sec sec-stack" aria-labelledby="people-title">
+        <div class="sec-pair">
         <header class="sec-head">
           <h2 id="people-title"><span class="n" aria-hidden="true">6</span>Explaining individual people</h2>
           <p>
@@ -327,6 +322,7 @@
 
         <div class="sec-body">
           <div class="chart chart-people" data-chart="people" aria-label="Four held-out people on the risk scale"></div>
+        </div>
         </div>
       <figure class="plate" id="patient-cards">
             <a class="plate-open" href="/figures/patient_cards.png">Open full size</a>

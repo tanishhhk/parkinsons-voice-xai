@@ -7,20 +7,9 @@ import { renderPeople } from "./charts/people";
 import { renderShap } from "./charts/shap";
 import { renderSingleFeature } from "./charts/singleFeature";
 import { renderSplit } from "./charts/split";
-import { drawCohort, drawTrace, trackSections } from "./page";
+import { drawCohort, trackSections } from "./page";
 
-// Chart modules mount into the [data-chart] elements in index.html (added by later tasks).
-
-const trace = document.querySelector<SVGSVGElement>("#trace");
-if (trace) {
-  drawTrace(trace);
-  let width = trace.clientWidth;
-  new ResizeObserver(() => {
-    if (Math.abs(trace.clientWidth - width) < 40) return;
-    width = trace.clientWidth;
-    drawTrace(trace, false);
-  }).observe(trace);
-}
+// Chart modules mount into the [data-chart] elements in index.html.
 
 const cohort = document.querySelector<HTMLElement>("#cohort");
 if (cohort) drawCohort(cohort, data.dataset.pd, data.dataset.healthy);
