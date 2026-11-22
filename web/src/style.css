@@ -1363,6 +1363,9 @@ tbody th {
   background: none;
   border: 1.5px dashed var(--ink);
 }
+.alarm-explain {
+  margin-top: 0.6rem;
+}
 .alarm-auc {
   font-weight: 550;
   color: var(--ink-2);

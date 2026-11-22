@@ -109,19 +109,22 @@ export function renderAlarm(el: HTMLElement, screening: ScreeningData, cohort: C
   mark.className = "alarm-mark";
   mark.style.setProperty("--f", String(frozenT));
   mark.setAttribute("aria-hidden", "true");
-  mark.innerHTML = "<i></i><b>frozen (as reported)</b>";
+  mark.innerHTML = `<i></i><b>frozen, per run (avg ${dp2(frozenT)})</b>`;
   track.append(input, mark);
   const scale = document.createElement("div");
   scale.className = "alarm-scale";
   scale.setAttribute("aria-hidden", "true");
   scale.innerHTML = "<span>0.00 flags everyone</span><span>1.00 flags no one</span>";
-  sliderBlock.append(label, track, scale);
+  const explain = document.createElement("p");
+  explain.className = "chart-note alarm-explain";
+  explain.textContent = `The reported result fixes the alarm level in advance for each test run, about ${dp2(frozenT)} on average. The slider applies one level to everyone, so even at ${dp2(frozenT)} the numbers can differ slightly.`;
+  sliderBlock.append(label, track, scale, explain);
   panel.appendChild(sliderBlock);
 
   const reset = document.createElement("button");
   reset.type = "button";
   reset.className = "alarm-reset";
-  reset.textContent = "Frozen thresholds (as reported)";
+  reset.textContent = "Reported result (per-run thresholds)";
   panel.appendChild(reset);
 
   // Readout: visible numbers update on every tick; the live copy waits for the slider to settle.
@@ -150,7 +153,7 @@ export function renderAlarm(el: HTMLElement, screening: ScreeningData, cohort: C
   keys.innerHTML =
     '<span class="ck ck-run"><i></i>One round of testing</span>' +
     '<span class="ck ck-now"><i></i>Current alarm level</span>' +
-    '<span class="ck ck-frozen"><i></i>Frozen (as reported)</span>' +
+    '<span class="ck ck-frozen"><i></i>Reported (per-run levels)</span>' +
     '<span class="ck ck-chance"><i></i>Chance</span>';
   const plot = document.createElement("div");
   plot.className = "plot";
@@ -169,13 +172,14 @@ export function renderAlarm(el: HTMLElement, screening: ScreeningData, cohort: C
       `Of the ${int(cohort.healthy)} healthy people, on average ${count(c.cleared)} are cleared and ` +
       `${count(c.falseAlarms)} get a false alarm. Of the ${int(cohort.pd)} with Parkinson's, on average ` +
       `${count(c.caught)} are caught and ${count(c.missed)} are missed.`;
-    const level = st.mode === "frozen" ? "Frozen thresholds as reported" : `Alarm level ${dp2(st.mode)}`;
+    const level = st.mode === "frozen" ? "Reported result, per-run thresholds" : `Alarm level ${dp2(st.mode)}`;
     sensEl.textContent = rate(op.sensitivity);
     specEl.textContent = rate(op.specificity);
-    value.textContent = st.mode === "frozen" ? `${dp2(frozenT)} (frozen)` : dp2(st.mode);
+    value.textContent =
+      st.mode === "frozen" ? `per-run levels (avg ${dp2(frozenT)})` : `${dp2(st.mode)}, one level for all runs`;
     input.setAttribute(
       "aria-valuetext",
-      st.mode === "frozen" ? `${dp2(frozenT)}, frozen thresholds as reported` : dp2(st.mode),
+      st.mode === "frozen" ? `per-run levels, average ${dp2(frozenT)}, as reported` : `${dp2(st.mode)}, one level for all runs`,
     );
     round.textContent = roundText;
     if (announce) {
@@ -237,7 +241,7 @@ export function renderAlarm(el: HTMLElement, screening: ScreeningData, cohort: C
         { cx: x(1 - frozen.specificity), cy: y(frozen.sensitivity), r: 9, class: "roc-frozen" },
         svg,
       );
-      svgTitle(f, "Frozen thresholds, as reported");
+      svgTitle(f, "Reported result, per-run thresholds");
     }
     const dot = svgEl("g", { class: "roc-now" }, svg);
     svgEl("circle", { r: 6, class: "roc-now-dot" }, dot);
