@@ -51,6 +51,8 @@ is worth across 12 models and 960 test runs:
 | Models affected | | **11 of 11**, all statistically significant |
 | Do the two methods agree on which model is best? | | **No.** Rank correlation 0.19 |
 
+Under the split by person, ROC-AUC averages 37 of 40 runs per model: in 3 runs the test group happened to contain no healthy speakers, so ROC-AUC can't be computed.
+
 That last row is the real cost. Under the flawed split, Extra Trees looks like the
 best model. Under the correct split, Logistic Regression wins. Picking a model using
 the flawed method is close to picking at random.
@@ -91,7 +93,7 @@ the muscles in the voice box. The data shows exactly that.
 | `PPE` | Irregularity in pitch control | Higher | 1.91 | 0.922 |
 | `MDVP:APQ` | Instability in loudness | Higher | 1.22 | 0.875 |
 | `spread2` | How erratically pitch moves | Higher | 1.46 | 0.859 |
-| `MDVP:Shimmer` | Variation in volume between cycles | Higher | 1.24 | 0.828 |
+| `MDVP:Shimmer` | Variation in volume between cycles | Higher | 1.23 | 0.828 |
 
 An effect size above 0.8 is considered large. The top two are above 1.9, which is very
 large. Notably, the classic voice measures used in most Parkinson's papers (jitter and
