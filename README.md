@@ -1,5 +1,7 @@
 # Parkinson's Disease Detection from Voice, with Explainable AI
 
+**Project site:** https://parkinsons-voice-xai.vercel.app (an interactive walkthrough of the study and its results)
+
 Parkinson's disease affects the muscles that control speech. This project uses 195
 voice recordings to predict whether a speaker has Parkinson's, and then explains
 exactly which parts of the voice led to each prediction.
