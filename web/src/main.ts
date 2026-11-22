@@ -1,5 +1,6 @@
 import "./style.css";
 import data from "./data.json";
+import { renderAlarm } from "./charts/alarm";
 import { renderBenchmark } from "./charts/benchmark";
 import { renderBiomarkers } from "./charts/biomarkers";
 import { renderPeople } from "./charts/people";
@@ -44,3 +45,6 @@ if (bioEl) renderBiomarkers(bioEl, data.biomarkers);
 
 const peopleEl = document.querySelector<HTMLElement>('[data-chart="people"]');
 if (peopleEl) renderPeople(peopleEl, data.people, data.screening.thresholdMean);
+
+const alarmEl = document.querySelector<HTMLElement>('[data-chart="alarm"]');
+if (alarmEl) renderAlarm(alarmEl, data.screening, data.dataset);
