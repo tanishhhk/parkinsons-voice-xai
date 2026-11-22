@@ -10,6 +10,8 @@ export interface ShapRow {
 }
 
 const ROW_H = 44;
+const ROW_H_NARROW = 58;
+const NARROW = 480;
 const TOP = 6;
 const PAD_R = 138;
 
@@ -33,7 +35,9 @@ export function renderShap(el: HTMLElement, rows: ShapRow[], stableTop: string[]
     el.appendChild(keys);
 
     const W = Math.max(280, width);
-    const H = TOP + sorted.length * ROW_H + 8;
+    const narrow = W < NARROW;
+    const rh = narrow ? ROW_H_NARROW : ROW_H;
+    const H = TOP + sorted.length * rh + 8;
     const x = linear([0, sorted[0].meanAbs], [0, W - PAD_R]);
     const svg = svgEl("svg", {
       viewBox: `0 0 ${W} ${H}`,
@@ -46,7 +50,7 @@ export function renderShap(el: HTMLElement, rows: ShapRow[], stableTop: string[]
     el.appendChild(svg);
 
     sorted.forEach((r, i) => {
-      const y0 = TOP + i * ROW_H;
+      const y0 = TOP + i * rh;
       const stable = stableTop.includes(r.feature);
       const g = svgEl("g", { class: `bar-row${stable ? " is-stable" : ""}`, "data-feature": r.feature }, svg);
       svgTitle(
@@ -55,15 +59,16 @@ export function renderShap(el: HTMLElement, rows: ShapRow[], stableTop: string[]
       );
       const name = svgText(g, r.plainName, { x: 0, y: y0 + 14, class: "name" });
       svgEl("tspan", { class: "code" }, name).textContent = ` ${r.feature}`;
+      const by = narrow ? 14 : 0;
       svgText(g, `rank ${dp1(r.rankMean)} ± ${dp1(r.rankSd)}`, {
-        x: W,
-        y: y0 + 14,
+        x: narrow ? 0 : W,
+        y: y0 + 14 + by,
         class: "aux",
-        "text-anchor": "end",
+        "text-anchor": narrow ? "start" : "end",
       });
-      svgEl("rect", { x: 0, y: y0 + 22, width: Math.max(2, x(r.meanAbs)), height: 11, rx: 2, class: "bar" }, g);
-      svgText(g, dp3(r.meanAbs), { x: x(r.meanAbs) + 8, y: y0 + 32, class: "val" });
-      if (stable) svgText(g, "stable top two", { x: x(r.meanAbs) + 46, y: y0 + 32, class: "tag" });
+      svgEl("rect", { x: 0, y: y0 + 22 + by, width: Math.max(2, x(r.meanAbs)), height: 11, rx: 2, class: "bar" }, g);
+      svgText(g, dp3(r.meanAbs), { x: x(r.meanAbs) + 8, y: y0 + 32 + by, class: "val" });
+      if (stable) svgText(g, "stable top two", { x: x(r.meanAbs) + 46, y: y0 + 32 + by, class: "tag" });
     });
 
     const note = document.createElement("p");

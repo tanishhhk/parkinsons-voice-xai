@@ -1173,3 +1173,11 @@ tbody th {
   font: 450 var(--t-small) / 1.5 var(--sans);
   color: var(--muted);
 }
+
+/* Paper halo so the 0.8 guide never strikes through label text */
+.bio-svg text:not(.chance-label):not(.tick):not(.axis-title) {
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}

@@ -51,7 +51,7 @@ export function renderBiomarkers(el: HTMLElement, data: BiomarkerRow[]): void {
     });
     el.appendChild(svg);
 
-    for (const t of ticks(0, top, 0.5)) {
+    for (const t of ticks(0, top, W < 480 ? 1 : 0.5)) {
       svgEl("line", { x1: x(t), x2: x(t), y1: TOP - 4, y2: axisY, class: "grid" }, svg);
       svgText(svg, dp2(t), { x: x(t), y: axisY + 16, class: "tick", "text-anchor": x(t) < 12 ? "start" : "middle" });
     }
