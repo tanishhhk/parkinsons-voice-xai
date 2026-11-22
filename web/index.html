@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detecting Parkinson's from the voice, with explainable AI</title>
+    <meta
+      name="description"
+      content="A walkthrough of a machine learning study on {{dataset.records|int}} voice recordings from {{dataset.people|int}} people: a splitting flaw that inflates published scores, a {{protocol.models|int}}-model benchmark, and what the explanations revealed."
+    />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#data">Skip to the walkthrough</a>
+
+    <main>
+      <section id="hero" class="hero" aria-labelledby="hero-title">
+        <div class="hero-bar">
+          <p>A machine learning study by <a href="https://tanishkjain.vercel.app/">Tanishk Jain</a></p>
+          <p class="hero-links">
+            <a href="https://github.com/tanishhhk/parkinsons-voice-xai">Code on GitHub</a>
+            <a href="https://github.com/tanishhhk/parkinsons-voice-xai/blob/main/notebooks/parkinsons_xai.ipynb">Read the notebook</a>
+          </p>
+        </div>
+
+        <div class="hero-main">
+          <h1 id="hero-title">Detecting Parkinson's from the voice</h1>
+          <p class="hero-lede">
+            Parkinson's disease disrupts the fine muscle control that holds a steady pitch. This study predicts it from
+            voice recordings, tests every model on people it has never heard, and shows which parts of the voice drove
+            each prediction.
+          </p>
+        </div>
+
+        <figure class="trace">
+          <svg id="trace" viewBox="0 0 1600 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>
+          <figcaption>Illustration, not data: a held "aah" whose pitch starts steady and then wavers.</figcaption>
+        </figure>
+
+        <dl class="facts">
+          <div class="fact">
+            <dt>{{dataset.records|int}}</dt>
+            <dd>
+              voice recordings from {{dataset.people|int}} people, {{dataset.pd|int}} with Parkinson's and
+              {{dataset.healthy|int}} healthy
+            </dd>
+          </div>
+          <div class="fact">
+            <dt>{{split.meanGap|signed3}}</dt>
+            <dd>
+              ROC-AUC per recording, the average inflation when one person's recordings land on both sides of the
+              split
+            </dd>
+          </div>
+          <div class="fact">
+            <dt>{{screening.report.roc_auc|dp3}}</dt>
+            <dd>
+              ROC-AUC per person, on people the model never heard, catching {{screening.report.sensitivity|pct1}} of
+              Parkinson's cases
+            </dd>
+          </div>
+          <div class="fact">
+            <dt>{{singleFeature[model=spread1].personAuc|dp3}}</dt>
+            <dd>
+              ROC-AUC per person from one pitch measure, <code>spread1</code>, against
+              {{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}} with all 16 in the same experiment
+            </dd>
+          </div>
+        </dl>
+        <p class="hero-key">
+          ROC-AUC measures how well the scores rank people with Parkinson's above healthy people: 1.0 is perfect,
+          0.5 is guessing.
+        </p>
+      </section>
+
+      <nav class="toc" aria-label="Sections">
+        <ol>
+          <li><a href="#data">The data</a></li>
+          <li><a href="#split">The flaw</a></li>
+          <li><a href="#benchmark">Benchmark</a></li>
+          <li><a href="#explain">Explainability</a></li>
+          <li><a href="#voice">The voice</a></li>
+          <li><a href="#people">People</a></li>
+          <li><a href="#alarm">Alarm level</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#limits">Limits</a></li>
+          <li><a href="#run">Run it</a></li>
+        </ol>
+      </nav>
+
+      <section id="data" class="sec" aria-labelledby="data-title">
+        <header class="sec-head">
+          <h2 id="data-title"><span class="n" aria-hidden="true">1</span>The question and the data</h2>
+          <p>
+            Speaking needs dozens of small muscles in the voice box to work in time. Parkinson's disrupts that fine
+            control, so a person trying to hold one note drifts and wobbles in pitch and loudness. The question: can a
+            model hear that, and can it say why?
+          </p>
+          <p>
+            The data is the Oxford Parkinson's dataset from the UCI repository: {{dataset.records|int}} recordings of a
+            held vowel from {{dataset.people|int}} people, {{dataset.recordsPerPerson.0|int}} or
+            {{dataset.recordsPerPerson.1|int}} recordings each, all made in one sitting. Each recording comes as
+            {{dataset.featuresBefore|int}} measurements of the voice.
+          </p>
+        </header>
+
+        <div class="sec-body data-body">
+          <figure class="cohort-fig">
+            <div class="cohort" id="cohort" data-pd="{{dataset.pd|int}}" data-healthy="{{dataset.healthy|int}}"></div>
+            <figcaption>
+              <span class="key key-pd">{{dataset.pd|int}} people with Parkinson's</span>
+              <span class="key key-hc">{{dataset.healthy|int}} healthy people</span>
+              <span class="cohort-note">
+                {{dataset.records|int}} recordings, but only {{dataset.people|int}} voices. That gap is the subject
+                of section 2.
+              </span>
+            </figcaption>
+          </figure>
+
+          <div class="dupes">
+            <h3>Duplicate measurements removed</h3>
+            <p>
+              {{dataset.dropped|len}} of the {{dataset.featuresBefore|int}} measurements are exact or near copies of
+              another. Keeping both splits their importance and corrupts the explanations, so
+              {{dataset.featuresAfter|int}} remain.
+            </p>
+            <table>
+              <thead>
+                <tr><th scope="col">Removed</th><th scope="col">Copy of</th><th scope="col" class="num">Correlation</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>{{dataset.dropped.0.feature|text}}</code></td><td><code>{{dataset.dropped.0.twin|text}}</code></td><td class="num">{{dataset.dropped.0.r|dp3}}</td></tr>
+                <tr><td><code>{{dataset.dropped.1.feature|text}}</code></td><td><code>{{dataset.dropped.1.twin|text}}</code></td><td class="num">{{dataset.dropped.1.r|dp3}}</td></tr>
+                <tr><td><code>{{dataset.dropped.2.feature|text}}</code></td><td><code>{{dataset.dropped.2.twin|text}}</code></td><td class="num">{{dataset.dropped.2.r|dp3}}</td></tr>
+                <tr><td><code>{{dataset.dropped.3.feature|text}}</code></td><td><code>{{dataset.dropped.3.twin|text}}</code></td><td class="num">{{dataset.dropped.3.r|dp3}}</td></tr>
+                <tr><td><code>{{dataset.dropped.4.feature|text}}</code></td><td><code>{{dataset.dropped.4.twin|text}}</code></td><td class="num">{{dataset.dropped.4.r|dp3}}</td></tr>
+                <tr><td><code>{{dataset.dropped.5.feature|text}}</code></td><td><code>{{dataset.dropped.5.twin|text}}</code></td><td class="num">{{dataset.dropped.5.r|dp3}}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <aside class="note">
+            <h3>31 people or {{dataset.people|int}}?</h3>
+            <p>
+              UCI documents the dataset as 31 people, 23 with Parkinson's. The file's <code>name</code> column holds
+              {{dataset.people|int}} distinct subject IDs, split {{dataset.pd|int}} to {{dataset.healthy|int}}, and
+              that is the only grouping the file supports. If two IDs are the same person, scores here are very
+              slightly optimistic, but grouping by ID is still far more conservative than not grouping at all.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="split" class="sec" aria-labelledby="split-title">
+        <header class="sec-head">
+          <h2 id="split-title"><span class="n" aria-hidden="true">2</span>The flaw: splitting by recording</h2>
+          <p>
+            Most projects on this dataset split the recordings at random. A person's recordings then land on both
+            sides: some in training, one in testing. The model can score well by recognising a voice it has already
+            heard, not by detecting the disease.
+          </p>
+          <p>
+            The fix is to split by person, so no voice is on both sides. Across {{split.total|int}} models, the random
+            split inflates ROC-AUC per recording by {{split.meanGap|signed3}} on average, and the gap is statistically
+            significant for {{split.significant|int}} of {{split.total|int}}.
+          </p>
+          <p class="pull">
+            The two methods don't even agree on the winner. Random split: {{split.bestLeaky.model|text}} at
+            {{split.bestLeaky.recording|dp3}}. Split by person: {{split.bestHonest.model|text}} at
+            {{split.bestHonest.person|dp3}}. Rank correlation between the two orderings: {{split.rankCorr|dp2}}, so
+            choosing a model with the flawed split is close to choosing at random.
+          </p>
+        </header>
+
+        <div class="sec-body">
+          <figure class="leak" aria-labelledby="leak-cap">
+            <div class="leak-row">
+              <p class="leak-name">Random split by recording</p>
+              <div class="leak-bins">
+                <div class="bin bin-train">
+                  <span class="bin-label">Training</span>
+                  <span class="recs"><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="me"></i><i class="me"></i><i class="me"></i><i class="me"></i><i class="me"></i><i class="o"></i><i class="o"></i><i class="o"></i></span>
+                </div>
+                <div class="bin bin-test">
+                  <span class="bin-label">Testing</span>
+                  <span class="recs"><i class="o"></i><i class="me"></i><i class="o"></i><i class="o"></i></span>
+                </div>
+              </div>
+              <p class="leak-verdict leak-bad">The test voice was already heard in training.</p>
+            </div>
+            <div class="leak-row">
+              <p class="leak-name">Split by person</p>
+              <div class="leak-bins">
+                <div class="bin bin-train">
+                  <span class="bin-label">Training</span>
+                  <span class="recs"><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i><i class="o"></i></span>
+                </div>
+                <div class="bin bin-test">
+                  <span class="bin-label">Testing</span>
+                  <span class="recs"><i class="me"></i><i class="me"></i><i class="me"></i><i class="me"></i><i class="me"></i><i class="me"></i></span>
+                </div>
+              </div>
+              <p class="leak-verdict leak-good">Every test voice is new to the model.</p>
+            </div>
+            <figcaption id="leak-cap">
+              <span class="key key-me">One person's recordings</span>
+              <span class="key key-o">Everyone else's</span>
+            </figcaption>
+          </figure>
+
+          <div class="chart chart-split" data-chart="split" aria-label="ROC-AUC per model under both splits"></div>
+        </div>
+      </section>
+
+      <section id="benchmark" class="sec" aria-labelledby="benchmark-title">
+        <header class="sec-head">
+          <h2 id="benchmark-title"><span class="n" aria-hidden="true">3</span>The benchmark</h2>
+          <p>
+            {{protocol.models|int}} models, from a majority-class baseline to XGBoost and a neural network. Each one
+            was tested {{benchmark.0.totalRuns|int}} times under the person split ({{protocol.folds|int}} folds,
+            repeated {{protocol.repeats|int}} times), with its settings tuned inside each training split and never on
+            test data.
+          </p>
+          <p class="stat">
+            <span class="stat-n">{{benchmark[model=Logistic Regression].mean|dp3}}</span>
+            <span class="stat-t">
+              ROC-AUC per recording for {{benchmark.0.model|text}}, the best model. It averages
+              {{benchmark[model=Logistic Regression].runs|len}} of {{benchmark[model=Logistic Regression].totalRuns|int}}
+              runs: in {{benchmark[model=Logistic Regression].undefinedRuns|int}} runs the test group held no healthy
+              speakers, so ROC-AUC is undefined.
+            </span>
+          </p>
+          <p>
+            The simplest model won, narrowly: {{benchmark.1.model|text}} reached {{benchmark.1.mean|dp3}} and
+            {{benchmark.2.model|text}} {{benchmark.2.mean|dp3}}. With {{dataset.people|int}} people there is not enough
+            data for complex models to find anything a straight line misses, and their scores swing more from run to
+            run.
+          </p>
+        </header>
+
+        <div class="sec-body">
+          <div class="chart chart-benchmark" data-chart="benchmark" aria-label="ROC-AUC of every test run, per model"></div>
+        </div>
+      </section>
+
+      <section id="explain" class="sec" aria-labelledby="explain-title">
+        <header class="sec-head">
+          <h2 id="explain-title"><span class="n" aria-hidden="true">4</span>What explainability changed</h2>
+          <p>
+            SHAP splits each prediction into the share each measurement contributed. I expected a tidy chart. Instead
+            it showed that <code>spread1</code> and <code>PPE</code>, two measures of pitch instability, carry most of
+            the signal. Recomputed across {{explain.stabilitySplits|int}} different splits, only those two keep their
+            place: average rank {{shap[feature=spread1].rankMean|dp1}} and {{shap[feature=PPE].rankMean|dp1}}.
+            Everything below them shuffles.
+          </p>
+          <p>
+            So I tested them directly, per person, in one matched experiment:
+          </p>
+          <table class="mini">
+            <thead>
+              <tr><th scope="col">Model</th><th scope="col" class="num">ROC-AUC per person</th><th scope="col" class="num">SD between runs</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>spread1</code> only</td><td class="num">{{singleFeature[model=spread1].personAuc|dp3}}</td><td class="num">{{singleFeature[model=spread1].personSd|dp3}}</td></tr>
+              <tr><td><code>PPE</code> only</td><td class="num">{{singleFeature[model=PPE].personAuc|dp3}}</td><td class="num">{{singleFeature[model=PPE].personSd|dp3}}</td></tr>
+              <tr><td>All {{dataset.featuresAfter|int}} features</td><td class="num">{{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}}</td><td class="num">{{singleFeature[model=ALL 16 FEATURES].personSd|dp3}}</td></tr>
+            </tbody>
+          </table>
+          <p>
+            One measurement beats all {{dataset.featuresAfter|int}} and varies far less between runs. With so few
+            people, the extra features fit noise. The right product here is a two-measurement test, not a large ensemble.
+          </p>
+        </header>
+
+        <div class="sec-body explain-body">
+          <div class="chart chart-shap" data-chart="shap" aria-label="Mean SHAP importance per measurement, with rank spread"></div>
+          <div class="chart chart-single" data-chart="single-feature" aria-label="ROC-AUC per person, one feature against all features"></div>
+        </div>
+      </section>
+
+      <section id="voice" class="sec" aria-labelledby="voice-title">
+        <header class="sec-head">
+          <h2 id="voice-title"><span class="n" aria-hidden="true">5</span>What the voice reveals</h2>
+          <p>
+            The strongest measurements are all about pitch that won't hold still. <code>spread1</code> tracks how
+            erratically pitch moves; <code>PPE</code> measures irregular pitch control. Both run higher in
+            Parkinson's, with effect sizes of {{biomarkers[feature=spread1].d|dp2}} and
+            {{biomarkers[feature=PPE].d|dp2}}. An effect size (Cohen's d) above 0.8 already counts as large.
+          </p>
+          <p>
+            The classic measures in most Parkinson's voice papers, jitter (pitch wobble between cycles) and shimmer
+            (loudness wobble), rank below these pitch-stability measures.
+          </p>
+          <p class="aside-text">
+            "Score alone" is how well the raw measurement separates the two groups, per person, before any model or
+            split.
+          </p>
+        </header>
+
+        <div class="sec-body">
+          <div class="chart chart-biomarkers" data-chart="biomarkers" aria-label="Effect size and single-measurement score for each voice measurement"></div>
+        </div>
+      </section>
+
+      <section id="people" class="sec" aria-labelledby="people-title">
+        <header class="sec-head">
+          <h2 id="people-title"><span class="n" aria-hidden="true">6</span>Explaining individual people</h2>
+          <p>
+            A screening tool has to answer one question for the person using it: why was I flagged? These four people
+            were all held out of training. Their scores sit on a 0 to 1 risk scale against the alarm threshold of
+            about {{screening.thresholdMean|dp2}}.
+          </p>
+          <dl class="cases">
+            <div><dt>{{people.0.subject|text}}, caught</dt><dd>Parkinson's, scored {{people.0.prob|dp2}}.</dd></div>
+            <div><dt>{{people.1.subject|text}}, cleared</dt><dd>Healthy, scored {{people.1.prob|dp2}}.</dd></div>
+            <div><dt>{{people.2.subject|text}}, false alarm</dt><dd>Healthy, but scored {{people.2.prob|dp2}}.</dd></div>
+            <div><dt>{{people.3.subject|text}}, missed</dt><dd>Parkinson's, but scored only {{people.3.prob|dp2}}.</dd></div>
+          </dl>
+          <p>
+            The miss is the most honest case. {{people.3.subject|text}} has Parkinson's, yet their pitch measurements
+            sit in the healthy range. A voice test cannot detect someone whose voice is not yet affected. That is a
+            limit of using voice at all, not a bug in the model.
+          </p>
+        </header>
+
+        <div class="sec-body">
+          <div class="chart chart-people" data-chart="people" aria-label="Four held-out people on the risk scale"></div>
+        </div>
+      </section>
+
+      <section id="alarm" class="sec" aria-labelledby="alarm-title">
+        <header class="sec-head">
+          <h2 id="alarm-title"><span class="n" aria-hidden="true">7</span>Setting the alarm level</h2>
+          <p>
+            A screening test is defined by where you set its threshold, not by its accuracy. Each run picks the
+            threshold that catches {{screening.targetSensitivity|pct0}} of cases using its training data only, then
+            freezes it before testing.
+          </p>
+          <table class="mini">
+            <thead>
+              <tr><th scope="col">Frozen threshold</th><th scope="col" class="num">Per recording</th><th scope="col" class="num">Per person</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">ROC-AUC</th><td class="num">{{screening.recordingLevel.roc_auc|dp3}}</td><td class="num strong">{{screening.report.roc_auc|dp3}}</td></tr>
+              <tr><th scope="row">Sensitivity, cases caught</th><td class="num">{{screening.recordingLevel.sensitivity|pct1}}</td><td class="num strong">{{screening.report.sensitivity|pct1}}</td></tr>
+              <tr><th scope="row">Specificity, healthy cleared</th><td class="num">{{screening.recordingLevel.specificity|pct1}}</td><td class="num strong">{{screening.report.specificity|pct1}}</td></tr>
+            </tbody>
+          </table>
+          <p>
+            A typical test round holds {{dataset.healthy|int}} healthy people and {{dataset.pd|int}} with Parkinson's.
+            On average the model clears {{screening.report.mean_confusion.tn|dp1}} healthy people and falsely alarms on
+            {{screening.report.mean_confusion.fp|dp1}}; it catches {{screening.report.mean_confusion.tp|dp1}} cases and
+            misses {{screening.report.mean_confusion.fn|dp1}}. Useful as an early warning before a doctor's
+            assessment, not as a diagnosis. Move the threshold to see the trade.
+          </p>
+        </header>
+
+        <div class="sec-body">
+          <div class="chart chart-alarm" data-chart="alarm" aria-label="Interactive alarm threshold"></div>
+        </div>
+      </section>
+
+      <section id="method" class="sec sec-wide" aria-labelledby="method-title">
+        <header class="sec-head">
+          <h2 id="method-title"><span class="n" aria-hidden="true">8</span>How it was built</h2>
+          <p>The checks that keep the numbers above honest.</p>
+        </header>
+
+        <div class="sec-body">
+          <ul class="checks">
+            <li>
+              <h3>Grouped splits</h3>
+              <p>Every split groups by person, so no voice is ever on both sides.</p>
+            </li>
+            <li>
+              <h3>Nested tuning</h3>
+              <p>
+                Each model is tested {{benchmark.0.totalRuns|int}} times ({{protocol.folds|int}} splits, repeated
+                {{protocol.repeats|int}} times). Settings are tuned inside each split, never on test data.
+              </p>
+            </li>
+            <li>
+              <h3>Frozen threshold</h3>
+              <p>The alarm level is chosen on training data, then frozen. Tuning a threshold on the test set is a quiet way to cheat.</p>
+            </li>
+            <li>
+              <h3>Scaling in the pipeline</h3>
+              <p>Scaling is refitted inside each split, so test data never influences training.</p>
+            </li>
+            <li>
+              <h3>Duplicates removed</h3>
+              <p>
+                {{dataset.dropped|len}} near-identical measurements dropped, {{dataset.featuresBefore|int}} became
+                {{dataset.featuresAfter|int}}, so importance isn't split between twins.
+              </p>
+            </li>
+            <li>
+              <h3>Explanations on unseen people</h3>
+              <p>Explaining training data describes memorisation, not real behaviour.</p>
+            </li>
+            <li>
+              <h3>Explanations checked for stability</h3>
+              <p>
+                SHAP was recomputed across {{explain.stabilitySplits|int}} splits. Only measurements that keep their
+                rank count as findings.
+              </p>
+            </li>
+            <li>
+              <h3>Accuracy is not the headline</h3>
+              <p>
+                {{prevalence|pct1}} of recordings are Parkinson's, so a model that always says "Parkinson's" is
+                already {{prevalence|pct1}} accurate.
+              </p>
+            </li>
+          </ul>
+
+          <aside class="shap-bug">
+            <div class="shap-text">
+              <h3>A common SHAP mistake</h3>
+              <p>
+                For a two-class problem SHAP returns values for both classes, and they mirror each other. Average
+                across the two and they cancel out. Measured on this data, mean importance comes out as shown here.
+              </p>
+              <p>Any chart built on the average is showing rounding noise. The code documents the fix.</p>
+            </div>
+            <dl class="shap-nums">
+              <div><dt>Averaged over both classes (wrong)</dt><dd class="shap-wrong">{{explain.shapAveraged|sig3}}</dd></div>
+              <div><dt>One class (correct)</dt><dd class="shap-right">{{explain.shapCorrect|sig3}}</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section id="limits" class="sec sec-wide sec-limits" aria-labelledby="limits-title">
+        <header class="sec-head">
+          <h2 id="limits-title"><span class="n" aria-hidden="true">9</span>What this cannot do</h2>
+          <p>Read every figure above with these in mind.</p>
+        </header>
+
+        <div class="sec-body">
+          <ul class="limits">
+            <li>
+              <h3>{{dataset.people|int}} people is a small sample</h3>
+              <p>
+                Only {{dataset.healthy|int}} are healthy, so the specificity of {{screening.report.specificity|pct1}}
+                rests on {{dataset.healthy|int}} people. Treat all figures as approximate.
+              </p>
+            </li>
+            <li>
+              <h3>One session, one setup</h3>
+              <p>Nothing here shows it would work with a different microphone, language or clinic.</p>
+            </li>
+            <li>
+              <h3>No separate hold-out set</h3>
+              <p>All results are cross-validation estimates. The dataset is too small to set aside a meaningful final test set.</p>
+            </li>
+            <li>
+              <h3>Not early detection</h3>
+              <p>Everyone in the data already has a diagnosis.</p>
+            </li>
+            <li>
+              <h3>Not a medical device</h3>
+              <p>This is a research and methodology project on a public dataset. Do not use it to make health decisions.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="run" class="sec sec-wide" aria-labelledby="run-title">
+        <header class="sec-head">
+          <h2 id="run-title"><span class="n" aria-hidden="true">10</span>Run it yourself</h2>
+          <div class="sec-intro">
+            <p>
+              Every number on this page is read from the repository's result files when the page is built. Rerun the
+              research code and they regenerate.
+            </p>
+            <p class="run-links">
+              <a href="https://github.com/tanishhhk/parkinsons-voice-xai">Repository on GitHub</a>
+              <a href="https://github.com/tanishhhk/parkinsons-voice-xai/blob/main/notebooks/parkinsons_xai.ipynb">Full notebook</a>
+            </p>
+          </div>
+        </header>
+
+        <div class="sec-body run-body">
+          <div class="code">
+            <h3>Commands</h3>
+            <pre><code>pip install -r requirements.txt
+
+cd src
+python run_experiments.py          # benchmark all {{protocol.models|int}} models, about 6 minutes
+python run_experiments.py --combine
+python analysis.py                 # leakage measurement and charts
+python screening.py                # threshold, ROC curves, calibration
+python biomarkers.py               # voice measures and per-person cards
+python explain.py                  # SHAP, feature importance, LIME
+python explain.py --stability      # how stable the explanations are
+
+cd ../notebooks
+python build_notebook.py
+jupyter nbconvert --to notebook --execute --inplace parkinsons_xai.ipynb</code></pre>
+          </div>
+
+          <div class="credits">
+            <h3>Data</h3>
+            <p>
+              Oxford Parkinson's Disease Detection Dataset.
+              <a href="https://archive.ics.uci.edu/dataset/174/parkinsons">UCI Machine Learning Repository, "Parkinsons" (ID 174)</a>.
+              Created by Max Little, University of Oxford, with the National Centre for Voice and Speech, Denver,
+              Colorado. Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+            </p>
+            <ul class="cites">
+              <li>
+                Little, M. (2007). Parkinsons [Dataset]. UCI Machine Learning Repository.
+                <a href="https://doi.org/10.24432/C59C74">https://doi.org/10.24432/C59C74</a>
+              </li>
+              <li>
+                Little, M., McSharry, P., Roberts, S., Costello, D., &amp; Moroz, I. (2007). Exploiting nonlinear
+                recurrence and fractal scaling properties for voice disorder detection. BioMedical Engineering OnLine,
+                6:23. <a href="https://doi.org/10.1186/1475-925X-6-23">https://doi.org/10.1186/1475-925X-6-23</a>
+              </li>
+            </ul>
+            <h3>Licences</h3>
+            <p>
+              Code and generated results: MIT License. Dataset: CC BY 4.0, redistributed with the attribution above.
+            </p>
+            <h3>Author</h3>
+            <p class="author">
+              Tanishk Jain
+              <a href="https://github.com/tanishhhk">GitHub</a>
+              <a href="https://linkedin.com/in/tanishhhk">LinkedIn</a>
+              <a href="https://tanishkjain.vercel.app/">Portfolio</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p><strong>Not a medical device.</strong> This page collects no data.</p>
+      <p>
+        Tanishk Jain. Code MIT, data CC BY 4.0 from the
+        <a href="https://archive.ics.uci.edu/dataset/174/parkinsons">UCI Machine Learning Repository</a>.
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

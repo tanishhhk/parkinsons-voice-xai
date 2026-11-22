@@ -83,7 +83,15 @@ const split = {
 };
 
 // --- benchmark: person-split ROC-AUC per repeat/fold
-const folds = parseCsv("tables/cv_folds.csv").filter((r) => r.protocol === "subject");
+const allFolds = parseCsv("tables/cv_folds.csv");
+const folds = allFolds.filter((r) => r.protocol === "subject");
+const distinct = (key) => new Set(allFolds.map((r) => r[key])).size;
+const protocol = {
+  models: distinct("model"),
+  folds: distinct("fold"),
+  repeats: distinct("repeat"),
+  testRuns: allFolds.length,
+};
 const benchmark = [...new Set(folds.map((r) => r.model))]
   .map((model) => {
     const runs = folds
@@ -149,11 +157,13 @@ const explain = {
   shapAveraged: expl.mean_abs_shap_classmean,
   shapCorrect: expl.mean_abs_shap_positive_class,
   stableTop: shap.filter((s) => s.rankMean < 4).map((s) => s.feature),
+  stabilitySplits: json("shap_stability_report.json").n_folds,
 };
 
 const data = {
   dataset,
   split,
+  protocol,
   benchmark,
   singleFeature,
   shap,
@@ -163,6 +173,7 @@ const data = {
     report: screeningReport.speaker_level,
     recordingLevel: screeningReport.recording_level,
     thresholdMean: screeningReport.threshold_mean,
+    targetSensitivity: screeningReport.target_sensitivity,
     persons,
   },
   explain,
