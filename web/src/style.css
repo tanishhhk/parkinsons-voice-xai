@@ -1041,3 +1041,135 @@ tbody th {
     transition: none;
   }
 }
+
+/* Bar charts: SHAP, single feature, voice measures */
+.bar-svg .name {
+  font-weight: 600;
+}
+.bar-svg .code {
+  font: 450 0.75rem var(--mono);
+  fill: var(--muted);
+}
+.bar-svg .aux,
+.bar-svg .dir {
+  fill: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.bar-svg .val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+.bar-svg .bar {
+  fill: var(--calm);
+}
+.bar-svg .is-stable .bar,
+.bar-svg .is-all .bar {
+  fill: var(--tulip);
+}
+.bio-svg .bar-row:not(.is-large) .bar {
+  fill: var(--calm-soft);
+  stroke: var(--calm);
+  stroke-width: 1.5;
+}
+.bar-svg .tag {
+  fill: var(--tulip);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.bar-svg .whisker {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.bar-svg .chance {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.bar-svg .chance-label {
+  fill: var(--muted);
+  font-size: 0.75rem;
+}
+.ck-stable i,
+.ck-all i,
+.ck-pd i {
+  background: var(--tulip);
+}
+.ck-other i,
+.ck-single i,
+.ck-large i,
+.ck-healthy i {
+  background: var(--calm);
+}
+.ck-small i {
+  background: var(--calm-soft);
+  border: 1.5px solid var(--calm);
+}
+.ck-sd i {
+  width: 0.9rem;
+  height: 0;
+  border-radius: 0;
+  border-top: 2px solid var(--ink);
+}
+.ck-pd i {
+  border-radius: 0;
+  transform: rotate(45deg) scale(0.8);
+}
+.chart-callout {
+  margin: 0 0 1rem;
+  font: 450 var(--t-body) / 1.5 var(--sans);
+  color: var(--ink);
+}
+
+/* People on the risk line */
+.people-svg .lane {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.people-svg .mark-pd {
+  fill: var(--tulip);
+}
+.people-svg .mark-healthy {
+  fill: var(--calm);
+}
+.people-svg .p-name {
+  font-weight: 700;
+}
+.people-svg .p-word {
+  font-size: 0.75rem;
+  font-weight: 550;
+  fill: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.people-svg .zone,
+.people-svg .chance-label {
+  fill: var(--muted);
+  font-size: 0.75rem;
+}
+.people-svg .chance {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+/* Patient cards figure */
+.plate {
+  margin: var(--gap) 0 0;
+}
+.plate-scroll {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.plate-scroll img {
+  display: block;
+  width: 100%;
+  min-width: 720px;
+  height: auto;
+}
+.plate figcaption {
+  margin-top: 0.75rem;
+  font: 450 var(--t-small) / 1.5 var(--sans);
+  color: var(--muted);
+}

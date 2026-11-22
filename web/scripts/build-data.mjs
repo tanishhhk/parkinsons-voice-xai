@@ -1,5 +1,5 @@
 // Reads ../results and writes src/data.json. Every number on the site comes from here.
-import { readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const RESULTS = new URL("../../results/", import.meta.url);
 const OUT = new URL("../src/data.json", import.meta.url);
@@ -8,15 +8,20 @@ const TOTAL_RUNS = 40;
 const text = (path) => readFileSync(new URL(path, RESULTS), "utf8");
 const json = (path) => JSON.parse(text(path));
 
-// Split on commas that are not inside {...} (cv_folds.csv best_params).
+// Split on commas that are not inside {...} (cv_folds.csv best_params) or "..." (quoted text).
 function splitLine(line) {
   const cells = [];
   let depth = 0;
+  let quoted = false;
   let cell = "";
   for (const ch of line) {
-    if (ch === "{") depth++;
-    if (ch === "}") depth--;
-    if (ch === "," && depth === 0) {
+    if (ch === '"') {
+      quoted = !quoted;
+      continue;
+    }
+    if (!quoted && ch === "{") depth++;
+    if (!quoted && ch === "}") depth--;
+    if (ch === "," && depth === 0 && !quoted) {
       cells.push(cell);
       cell = "";
     } else cell += ch;
@@ -181,4 +186,11 @@ const data = {
 };
 
 writeFileSync(OUT, JSON.stringify(data, null, 2) + "\n");
+
+// The per-measurement reasons figure from the original analysis, shown as-is on the page.
+// Copied at data-build time (also run by prebuild on Vercel); public/figures/ is gitignored.
+const FIG_DIR = new URL("../public/figures/", import.meta.url);
+mkdirSync(FIG_DIR, { recursive: true });
+copyFileSync(new URL("figures/patient_cards.png", RESULTS), new URL("patient_cards.png", FIG_DIR));
+
 console.log(`wrote ${OUT.pathname}`);

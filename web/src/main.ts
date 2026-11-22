@@ -1,6 +1,10 @@
 import "./style.css";
 import data from "./data.json";
 import { renderBenchmark } from "./charts/benchmark";
+import { renderBiomarkers } from "./charts/biomarkers";
+import { renderPeople } from "./charts/people";
+import { renderShap } from "./charts/shap";
+import { renderSingleFeature } from "./charts/singleFeature";
 import { renderSplit } from "./charts/split";
 import { drawCohort, drawTrace, trackSections } from "./page";
 
@@ -28,3 +32,15 @@ if (splitEl) renderSplit(splitEl, data.split, "recording");
 
 const benchEl = document.querySelector<HTMLElement>('[data-chart="benchmark"]');
 if (benchEl) renderBenchmark(benchEl, data.benchmark);
+
+const shapEl = document.querySelector<HTMLElement>('[data-chart="shap"]');
+if (shapEl) renderShap(shapEl, data.shap, data.explain.stableTop, data.explain.stabilitySplits);
+
+const singleEl = document.querySelector<HTMLElement>('[data-chart="single-feature"]');
+if (singleEl) renderSingleFeature(singleEl, data.singleFeature);
+
+const bioEl = document.querySelector<HTMLElement>('[data-chart="biomarkers"]');
+if (bioEl) renderBiomarkers(bioEl, data.biomarkers);
+
+const peopleEl = document.querySelector<HTMLElement>('[data-chart="people"]');
+if (peopleEl) renderPeople(peopleEl, data.people, data.screening.thresholdMean);

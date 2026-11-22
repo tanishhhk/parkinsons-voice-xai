@@ -261,18 +261,11 @@
             Everything below them shuffles.
           </p>
           <p>
-            So I tested them directly, per person, in one matched experiment:
+            So I tested them directly, per person, in one matched experiment. <code>spread1</code> alone scores
+            {{singleFeature[model=spread1].personAuc|dp3}} and <code>PPE</code> alone
+            {{singleFeature[model=PPE].personAuc|dp3}}, against
+            {{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}} for all {{dataset.featuresAfter|int}} features.
           </p>
-          <table class="mini">
-            <thead>
-              <tr><th scope="col">Model</th><th scope="col" class="num">ROC-AUC per person</th><th scope="col" class="num">SD between runs</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><code>spread1</code> only</td><td class="num">{{singleFeature[model=spread1].personAuc|dp3}}</td><td class="num">{{singleFeature[model=spread1].personSd|dp3}}</td></tr>
-              <tr><td><code>PPE</code> only</td><td class="num">{{singleFeature[model=PPE].personAuc|dp3}}</td><td class="num">{{singleFeature[model=PPE].personSd|dp3}}</td></tr>
-              <tr><td>All {{dataset.featuresAfter|int}} features</td><td class="num">{{singleFeature[model=ALL 16 FEATURES].personAuc|dp3}}</td><td class="num">{{singleFeature[model=ALL 16 FEATURES].personSd|dp3}}</td></tr>
-            </tbody>
-          </table>
           <p>
             One measurement beats all {{dataset.featuresAfter|int}} and varies far less between runs. With so few
             people, the extra features fit noise. The right product here is a two-measurement test, not a large ensemble.
@@ -332,6 +325,19 @@
 
         <div class="sec-body">
           <div class="chart chart-people" data-chart="people" aria-label="Four held-out people on the risk scale"></div>
+          <figure class="plate" id="patient-cards">
+            <div class="plate-scroll" tabindex="0" role="region" aria-label="Patient cards figure, scrolls sideways on narrow screens">
+            <img
+              src="/figures/patient_cards.png"
+              alt="Four bar charts, one per held-out person (S01, S07, S13, S25). Each lists the measurements that pushed that person's score towards or away from Parkinson's. S01 is pushed up mainly by DFA, spread1 and PPE; S07 and S25 are pushed down by spread1, PPE and spread2; S13 has mixed pushes, with MDVP:Fo(Hz) and spread2 raising the score."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              The original analysis, one card per person: the measurements that pushed each score up or down. Same four
+              people as the scale above.
+            </figcaption>
+          </figure>
         </div>
       </section>
 
